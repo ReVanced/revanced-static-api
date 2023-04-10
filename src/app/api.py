@@ -4,11 +4,11 @@ import requests
 
 
 class Api:
-    _api_key: str
+    _api_key: str | None
 
     @abstractmethod
-    def __init__(self, api_key: str = None) -> None:
-        self._api_key: str = api_key
+    def __init__(self, api_key: str | None = None) -> None:
+        self._api_key = api_key
 
     @abstractmethod
     def get_release(
@@ -108,7 +108,7 @@ class GitHubApi(Api):
             ).json()
             return list(map(transform_release, releases))  # List might not be needed.
         else:
-            latest_release: object = requests.get(
+            latest_release: dict = requests.get(
                 f"https://api.github.com/repos/{repository}/releases/latest?prerelease={prerelease}"
             ).json()
             return transform_release(latest_release)

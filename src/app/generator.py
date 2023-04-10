@@ -99,7 +99,7 @@ class ApiProvider:
     def __init__(self, apis: list[Api]) -> None:
         self._apis = apis
 
-    def get(self, name: str) -> Api:
+    def get(self, name: str) -> Api | None:
         for api in self._apis:
             if api.name == name:
                 return api
