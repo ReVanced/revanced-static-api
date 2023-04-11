@@ -58,7 +58,7 @@ class GitHubApi(Api):
             }
 
         def sort_and_delete_key(contributor: dict) -> int:
-            contributions = contributor["contributions"]
+            contributions: int = contributor["contributions"]
             del contributor["contributions"]
             return contributions
 

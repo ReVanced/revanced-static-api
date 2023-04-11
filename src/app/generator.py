@@ -8,7 +8,7 @@ from abc import abstractmethod
 class Api:
     _api: api.Api
 
-    def __init__(self, name: str, api: api.Api = api.GitHubApi()):
+    def __init__(self, name: str, api: api.Api = api.GitHubApi()) -> None:
         self.name = name
         self._api = api
 
@@ -25,8 +25,9 @@ class Api:
 
 
 class ReleaseApi(Api):
-    def __init__(self, api):
+    def __init__(self, api) -> None:
         super().__init__("release", api)
+        pass
 
     def generate(self, config, path):
         path = join(path, "release")
@@ -60,8 +61,9 @@ class ReleaseApi(Api):
 
 
 class ContributorApi(Api):
-    def __init__(self, api):
+    def __init__(self, api) -> None:
         super().__init__("contributor", api)
+        pass
 
     def generate(self, config, path):
         path = join(path, "contributor")
@@ -79,7 +81,7 @@ class ContributorApi(Api):
 
 
 class SocialApi(Api):
-    def __init__(self, api):
+    def __init__(self, api) -> None:
         super().__init__("social", api)
 
     def generate(self, config, path):
@@ -94,7 +96,7 @@ class SocialApi(Api):
 class ApiProvider:
     _apis: list[Api]
 
-    def __init__(self, apis: list[Api]):
+    def __init__(self, apis: list[Api]) -> None:
         self._apis = apis
 
     def get(self, name: str) -> Api | None:
