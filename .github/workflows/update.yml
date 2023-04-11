@@ -40,7 +40,7 @@ jobs:
 
       - name: Update static API
         run: |
-          pip install requests
+          pip install -r requirements.txt
           python src/main.py
 
       - name: Commit changes
