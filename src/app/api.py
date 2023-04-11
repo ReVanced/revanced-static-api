@@ -7,7 +7,7 @@ class Api:
     _api_key: str | None
 
     @abstractmethod
-    def __init__(self, api_key: str | None = None) -> None:
+    def __init__(self, api_key: str | None = None):
         self._api_key = api_key
 
     @abstractmethod
@@ -36,7 +36,7 @@ class Api:
 
 
 class GitHubApi(Api):
-    def __init__(self) -> None:
+    def __init__(self):
         pass
 
     def get_contributor(self, repository):
