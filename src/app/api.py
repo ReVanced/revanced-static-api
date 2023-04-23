@@ -35,6 +35,16 @@ class Api:
         raise NotImplementedError
 
 
+    @abstractmethod
+    def get_members(self, organization):
+        '''Gets the team for an organization.
+
+        Args:
+                organization (str): The organization to get the team for.
+        '''
+        raise NotImplementedError
+
+
 class GitHubApi(Api):
     def __init__(self):
         pass
@@ -112,3 +122,25 @@ class GitHubApi(Api):
                 f"https://api.github.com/repos/{repository}/releases/latest?prerelease={prerelease}"
             ).json()
             return transform_release(latest_release)
+
+    def get_members(self, organization):
+        def transform_team_member(member: dict) -> dict:
+            '''Transforms a team member into a dict.
+
+            Args:
+                    member (dict): The member to transform.
+
+            Returns:
+                    dict: The transformed member.
+            '''
+
+            return {
+                'username': member['login'],
+                'avatar': member['avatar_url'],  # TODO: Proxy via a CDN.
+                'link': member['html_url']
+            }
+
+        members = requests.get(
+            f'https://api.github.com/orgs/{organization}/members').json()
+        # List might not be needed.
+        return list(map(transform_team_member, members))

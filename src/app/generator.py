@@ -83,13 +83,35 @@ class SocialApi(Api):
         super().__init__("social", api)
 
     def generate(self, config, path):
-        new_social = config
+        new_social = config["socials"]
 
         social_path = join(path, f"social.json")
-        social = read_json(social_path, new_social)
 
-        write_json(social, social_path)
+        write_json(new_social, social_path)
 
+class TeamApi(Api):
+    def __init__(self, api):
+        super().__init__("team", api)
+
+    def generate(self, config, path):
+        organization = config["organization"]
+
+        team = self._api.get_members(organization)
+
+        team_path = join(path, f"team.json")
+
+        write_json(team, team_path)
+
+class DonationApi(Api):
+    def __init__(self, api):
+        super().__init__("donation", api)
+
+    def generate(self, config, path):
+        donation = config["links"]
+
+        donation_path = join(path, f"donation.json")
+
+        write_json(donation, donation_path)
 
 class ApiProvider:
     _apis: list[Api]
@@ -107,8 +129,12 @@ class ApiProvider:
 
 class DefaultApiProvider(ApiProvider):
     def __init__(self):
-        self._api = api.GitHubApi()  # Use GitHub as default api
-
-        super().__init__(
-            [ReleaseApi(self._api), ContributorApi(self._api), SocialApi(self._api)]
-        )
+        self._api = api.GitHubApi() # Use GitHub as default api
+        
+        super().__init__([
+            ReleaseApi(self._api),
+            ContributorApi(self._api),
+            SocialApi(self._api),
+            TeamApi(self._api),
+            DonationApi(self._api)
+        ])

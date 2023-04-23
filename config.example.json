@@ -11,6 +11,17 @@
 			"socials": {
 				"website": "https://yourwebsite.com"
 			}
+		},
+		{
+			"type": "team",
+			"organization": "yourorg"
+		},
+		{
+			"type": "donation",
+			"links": {
+				"liberapay": "https://liberapay.com/yourteam",
+				"github": "https://github.com/sponsors/yourteam"
+			}
 		}
 	],
 	"output": "static"
