@@ -1,0 +1,11 @@
+{
+  "tag": "v0.120.0",
+  "prerelease": false,
+  "published_at": "2023-10-20T01:27:08Z",
+  "assets": [
+    {
+      "name": "revanced-integrations-0.120.0.apk",
+      "download_url": "https://github.com/ReVanced/revanced-integrations/releases/download/v0.120.0/revanced-integrations-0.120.0.apk"
+    }
+  ]
+}

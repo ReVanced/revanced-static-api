@@ -1,0 +1,37 @@
+[
+  {
+    "name": "Website",
+    "url": "https://revanced.app",
+    "preferred": true
+  },
+  {
+    "name": "GitHub",
+    "url": "https://github.com/revanced",
+    "preferred": false
+  },
+  {
+    "name": "Twitter",
+    "url": "https://twitter.com/revancedapp",
+    "preferred": false
+  },
+  {
+    "name": "Discord",
+    "url": "https://revanced.app/discord",
+    "preferred": true
+  },
+  {
+    "name": "Reddit",
+    "url": "https://www.reddit.com/r/revancedapp",
+    "preferred": false
+  },
+  {
+    "name": "Telegram",
+    "url": "https://t.me/app_revanced",
+    "preferred": false
+  },
+  {
+    "name": "YouTube",
+    "url": "https://www.youtube.com/@ReVanced",
+    "preferred": false
+  }
+]

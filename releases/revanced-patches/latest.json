@@ -1,0 +1,15 @@
+{
+  "tag": "v2.195.0",
+  "prerelease": false,
+  "published_at": "2023-10-20T01:26:34Z",
+  "assets": [
+    {
+      "name": "patches.json",
+      "download_url": "https://github.com/ReVanced/revanced-patches/releases/download/v2.195.0/patches.json"
+    },
+    {
+      "name": "revanced-patches-2.195.0.jar",
+      "download_url": "https://github.com/ReVanced/revanced-patches/releases/download/v2.195.0/revanced-patches-2.195.0.jar"
+    }
+  ]
+}

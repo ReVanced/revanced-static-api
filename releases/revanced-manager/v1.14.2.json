@@ -1,0 +1,11 @@
+{
+  "tag": "v1.14.2",
+  "prerelease": false,
+  "published_at": "2023-10-26T14:34:41Z",
+  "assets": [
+    {
+      "name": "revanced-manager-v1.14.2.apk",
+      "download_url": "https://github.com/ReVanced/revanced-manager/releases/download/v1.14.2/revanced-manager-v1.14.2.apk"
+    }
+  ]
+}
