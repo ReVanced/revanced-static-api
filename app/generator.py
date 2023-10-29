@@ -1,7 +1,7 @@
 import json
 from os.path import join
 from app import api
-from app.utils import get_repository_name, write_json, read_json, create_if_not_exists
+from app.utils import get_repository_name, to_json, write_json, read_json, create_if_not_exists
 from abc import abstractmethod
 
 
@@ -40,7 +40,7 @@ class ReleaseApi(Api):
             tag = release["tag"]
 
             release_path = join(path, repository_name)
-            release_json = json.dumps(release)
+            release_json = to_json(release)
 
             create_if_not_exists(release_path)
 
