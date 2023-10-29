@@ -3,7 +3,6 @@ from app import api
 from app.utils import get_repository_name, to_json, write_json, read_json, create_if_not_exists
 from abc import abstractmethod
 
-
 class Generator:
     _api: api.Api
 
@@ -137,8 +136,8 @@ class DonationsGenerator(Generator):
         super().__init__("donations", api)
 
     def generate(self, config, path):
-        donation_links = config["links"]
-        donation_wallets = config["wallets"]
+        donation_links = config["links"] if "links" in config else []
+        donation_wallets = config["wallets"] if "wallets" in config else []
 
         donation_path = join(path, f"donations.json")
 
