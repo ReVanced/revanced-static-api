@@ -102,11 +102,11 @@ class ConnectionsGenerator(Generator):
         super().__init__("connections", api)
 
     def generate(self, config, path):
-        new_social = config["connections"]
+        new_connections = config["connections"]
 
-        social_path = join(path, f"connections.json")
+        connections_path = join(path, f"connections.json")
 
-        write_json(new_social, social_path)
+        write_json(new_connections, connections_path)
 
 
 class TeamGenerator(Generator):

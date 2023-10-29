@@ -10,9 +10,9 @@
 		},
 		{
 			"generators": [
-				"social"
+				"connections"
 			],
-			"socials": {
+			"connections": {
 				"website": "https://yourwebsite.com"
 			}
 		},
