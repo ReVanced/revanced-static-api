@@ -3,6 +3,10 @@ name: Update static files
 on:
   repository_dispatch:
   workflow_dispatch:
+    inputs:
+      output-branch:
+        descripton: "Branch to push static files to"
+        required: true
 
 jobs:
   update:
@@ -24,7 +28,7 @@ jobs:
 
       - name: Check if a deployment exists
         run: |
-          if git ls-remote --exit-code --heads origin gh-pages; then
+          if git ls-remote --exit-code --heads origin ${{ inputs.output-branch }}; then
             echo "::set-output name=deployment-exists::true"
           else
             echo "::set-output name=deployment-exists::false"
@@ -36,12 +40,12 @@ jobs:
         run: |
           git config user.name revanced-bot
           git config user.email github@revanced.app
-          git subtree add --prefix=static/ origin/gh-pages --squash
+          git subtree add --prefix=static/ origin/${{ inputs.output-branch }} --squash
 
       - name: Update static files
         run: |
-          pip install requests
-          python src/main.py
+          poetry install
+          poetry run python main.py
 
       - name: Commit changes
         uses: EndBug/add-and-commit@v9
@@ -54,6 +58,6 @@ jobs:
         uses: s0/git-publish-subdir-action@develop
         env:
           REPO: self
-          BRANCH: gh-pages
+          BRANCH: ${{ inputs.output-branch }}
           FOLDER: static
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
