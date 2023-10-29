@@ -13,7 +13,7 @@ The following configuration generates static files using the `contributors` and 
 
 ```json
 {
-  "api": [
+  "configs": [
     {
       "generators": ["releases", "contributors"],
       "repositories": ["user/repo"]
