@@ -1,6 +1,6 @@
 # Static API
 
-Proof of concept repository to host a static API using GitHub workflows.
+Repository to host a static API using GitHub workflows.
 
 ## How it works
 
@@ -22,7 +22,7 @@ The following API configuration generates the `contributor` and `release` API fo
 }
 ```
 
-All static files are generated in the output path specified in the configuration. 
+All static files are generated in the output path specified in the configuration.
 
 ## Setup
 
