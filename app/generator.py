@@ -136,15 +136,15 @@ class DonationsGenerator(Generator):
         super().__init__("donations", api)
 
     def generate(self, config, path):
-        donation_links = config["links"] if "links" in config else []
-        donation_wallets = config["wallets"] if "wallets" in config else []
+        links = config["links"] if "links" in config else []
+        wallets = config["wallets"] if "wallets" in config else []
 
         donation_path = join(path, f"donations.json")
 
         write_json(
             {
-                "links": donation_links,
-                "wallets": donation_wallets
+                "links": links,
+                "wallets": wallets
             },
             donation_path
         )
