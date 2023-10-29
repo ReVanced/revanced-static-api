@@ -134,7 +134,7 @@ class DonationsGenerator(Generator):
     def generate(self, config, path):
         donation = config["links"]
 
-        donation_path = join(path, f"donation.json")
+        donation_path = join(path, f"donations.json")
 
         write_json(donation, donation_path)
 
