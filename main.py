@@ -4,13 +4,13 @@ from app.generator import DefaultGeneratorProvider
 config = load_config()
 
 output = config["output"]
-apis = config["api"]
+configs = config["configs"]
 
-api_provider = DefaultGeneratorProvider()
+generator_provider = DefaultGeneratorProvider()
 
-for api in apis:
-    for generator_name in api["generators"]:
-        generator = api_provider.get(generator_name)
+for config in configs:
+    for generator_name in config["generators"]:
+        generator = generator_provider.get(generator_name)
         if generator is None:
             continue
-        generator.generate(api, output)
+        generator.generate(config, output)

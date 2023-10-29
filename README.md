@@ -9,13 +9,13 @@ The file `generator.py` provides a list of static file generator classes. Each c
 The configuration file `config.json` is read which contains the configuration for the API.  
 By specifying the name of the generator in the `generators` array of the configuration, the corresponding generator will be used. The current object of the configuration is passed to the generator.
 
-The following API configuration generates the `contributor` and `release` API for selected repositories:
+The following configuration generates static files using the `contributors` and `releases` generator for selected repositories:
 
 ```json
 {
   "api": [
     {
-      "generators": ["release", "contributor"],
+      "generators": ["releases", "contributors"],
       "repositories": ["user/repo"]
     }
   ]
