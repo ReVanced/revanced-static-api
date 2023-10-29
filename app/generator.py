@@ -28,17 +28,17 @@ class Generator:
         raise NotImplementedError
 
 
-class ReleaseGenerator(Generator):
+class ReleasesGenerator(Generator):
     """
     Generates a release file for each repository in the config.
     The release file is named after the tag of the release and contains the latest release information of the repository.
     A `latest.json` file is also generated containing the latest release of the repository.
     """
     def __init__(self, api):
-        super().__init__("release", api)
+        super().__init__("releases", api)
 
     def generate(self, config, path):
-        path = join(path, "release")
+        path = join(path, "releases")
 
         repositories = config["repositories"]
 
@@ -69,16 +69,16 @@ class ReleaseGenerator(Generator):
             write_json(index, index_path)
 
 
-class ContributorGenerator(Generator):
+class ContributorsGenerator(Generator):
     """
     Generates a contributor file for each repository in the config.
     The contributor file is named after the repository and contains the contributors of the repository.
     """
     def __init__(self, api):
-        super().__init__("contributor", api)
+        super().__init__("contributors", api)
 
     def generate(self, config, path):
-        path = join(path, "contributor")
+        path = join(path, "contributors")
 
         create_if_not_exists(path)
         repositories = config["repositories"]
@@ -92,17 +92,17 @@ class ContributorGenerator(Generator):
             write_json(contributors, contributors_path)
 
 
-class SocialGenerator(Generator):
+class ConnectionsGenerator(Generator):
     """
-    Generates a social file containing the social links of the organization.
+    Generates a file containing the connections of the organization.
     """
     def __init__(self, api):
-        super().__init__("social", api)
+        super().__init__("connections", api)
 
     def generate(self, config, path):
-        new_social = config["socials"]
+        new_social = config["connections"]
 
-        social_path = join(path, f"social.json")
+        social_path = join(path, f"connections.json")
 
         write_json(new_social, social_path)
 
@@ -124,12 +124,12 @@ class TeamGenerator(Generator):
         write_json(team, team_path)
 
 
-class DonationGenerator(Generator):
+class DonationsGenerator(Generator):
     """
     Generates a donation file containing the donation links of the organization.
     """
     def __init__(self, api):
-        super().__init__("donation", api)
+        super().__init__("donations", api)
 
     def generate(self, config, path):
         donation = config["links"]
@@ -158,9 +158,9 @@ class DefaultGeneratorProvider(GeneratorProvider):
         self._api = api.GitHubApi()
 
         super().__init__([
-            ReleaseGenerator(self._api),
-            ContributorGenerator(self._api),
-            SocialGenerator(self._api),
+            ReleasesGenerator(self._api),
+            ContributorsGenerator(self._api),
+            ConnectionsGenerator(self._api),
             TeamGenerator(self._api),
-            DonationGenerator(self._api)
+            DonationsGenerator(self._api)
         ])
