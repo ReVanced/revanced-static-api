@@ -1,12 +1,12 @@
 from app.config import load_config
-from app.generator import DefaultApiProvider
+from app.generator import DefaultGeneratorProvider
 
 config = load_config()
 
 output = config["output"]
 apis = config["api"]
 
-api_provider = DefaultApiProvider()
+api_provider = DefaultGeneratorProvider()
 
 for api in apis:
     for generator_name in api["generators"]:

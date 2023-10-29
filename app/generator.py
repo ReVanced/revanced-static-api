@@ -1,30 +1,29 @@
-import json
 from os.path import join
 from app import api
 from app.utils import get_repository_name, to_json, write_json, read_json, create_if_not_exists
 from abc import abstractmethod
 
 
-class Api:
+class Generator:
     _api: api.Api
 
-    def __init__(self, name: str, api: api.Api = api.GitHubApi()):
+    def __init__(self, name: str, api: api.Api):
         self.name = name
         self._api = api
 
     @abstractmethod
     def generate(self, config, path):
         """
-        Generates the api based on the config to the path.
+        Generates static files based on the supplied config to the specified path.
 
         Args:
-                config (dict): The config for the api
-                path (str): The path where the api should be generated
+                config (dict): The configuration for the generator
+                path (str): The path to generate the static files to
         """
         raise NotImplementedError
 
 
-class ReleaseApi(Api):
+class ReleaseGenerator(Generator):
     def __init__(self, api):
         super().__init__("release", api)
 
@@ -60,7 +59,7 @@ class ReleaseApi(Api):
             write_json(index, index_path)
 
 
-class ContributorApi(Api):
+class ContributorGenerator(Generator):
     def __init__(self, api):
         super().__init__("contributor", api)
 
@@ -79,7 +78,7 @@ class ContributorApi(Api):
             write_json(contributors, contributors_path)
 
 
-class SocialApi(Api):
+class SocialGenerator(Generator):
     def __init__(self, api):
         super().__init__("social", api)
 
@@ -91,7 +90,7 @@ class SocialApi(Api):
         write_json(new_social, social_path)
 
 
-class TeamApi(Api):
+class TeamGenerator(Generator):
     def __init__(self, api):
         super().__init__("team", api)
 
@@ -105,7 +104,7 @@ class TeamApi(Api):
         write_json(team, team_path)
 
 
-class DonationApi(Api):
+class DonationGenerator(Generator):
     def __init__(self, api):
         super().__init__("donation", api)
 
@@ -117,28 +116,28 @@ class DonationApi(Api):
         write_json(donation, donation_path)
 
 
-class ApiProvider:
-    _apis: list[Api]
+class GeneratorProvider:
+    generators: list[Generator]
 
-    def __init__(self, apis: list[Api]):
-        self._apis = apis
+    def __init__(self, generators: list[Generator]):
+        self.generators = generators
 
-    def get(self, name: str) -> Api | None:
-        for api in self._apis:
-            if api.name == name:
-                return api
+    def get(self, name: str) -> Generator | None:
+        for generator in self.generators:
+            if generator.name == name:
+                return generator
 
         return None
 
 
-class DefaultApiProvider(ApiProvider):
+class DefaultGeneratorProvider(GeneratorProvider):
     def __init__(self):
-        self._api = api.GitHubApi()  # Use GitHub as default api
+        self._api = api.GitHubApi()
 
         super().__init__([
-            ReleaseApi(self._api),
-            ContributorApi(self._api),
-            SocialApi(self._api),
-            TeamApi(self._api),
-            DonationApi(self._api)
+            ReleaseGenerator(self._api),
+            ContributorGenerator(self._api),
+            SocialGenerator(self._api),
+            TeamGenerator(self._api),
+            DonationGenerator(self._api)
         ])
