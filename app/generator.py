@@ -44,7 +44,8 @@ class ReleaseApi(Api):
 
             create_if_not_exists(release_path)
 
-            write_json(release_json, join(release_path, f"{tag}.json"), overwrite=False)
+            write_json(release_json, join(
+                release_path, f"{tag}.json"), overwrite=False)
             write_json(
                 release_json, join(release_path, "latest.json")
             )  # Overwrite the latest release
@@ -89,6 +90,7 @@ class SocialApi(Api):
 
         write_json(new_social, social_path)
 
+
 class TeamApi(Api):
     def __init__(self, api):
         super().__init__("team", api)
@@ -102,6 +104,7 @@ class TeamApi(Api):
 
         write_json(team, team_path)
 
+
 class DonationApi(Api):
     def __init__(self, api):
         super().__init__("donation", api)
@@ -112,6 +115,7 @@ class DonationApi(Api):
         donation_path = join(path, f"donation.json")
 
         write_json(donation, donation_path)
+
 
 class ApiProvider:
     _apis: list[Api]
@@ -129,8 +133,8 @@ class ApiProvider:
 
 class DefaultApiProvider(ApiProvider):
     def __init__(self):
-        self._api = api.GitHubApi() # Use GitHub as default api
-        
+        self._api = api.GitHubApi()  # Use GitHub as default api
+
         super().__init__([
             ReleaseApi(self._api),
             ContributorApi(self._api),

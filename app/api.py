@@ -34,7 +34,6 @@ class Api:
         """
         raise NotImplementedError
 
-
     @abstractmethod
     def get_members(self, organization):
         '''Gets the team for an organization.
@@ -116,7 +115,8 @@ class GitHubApi(Api):
             releases: list = requests.get(
                 f"https://api.github.com/repos/{repository}/releases"
             ).json()
-            return list(map(transform_release, releases))  # List might not be needed.
+            # List might not be needed.
+            return list(map(transform_release, releases))
         else:
             latest_release: dict = requests.get(
                 f"https://api.github.com/repos/{repository}/releases/latest?prerelease={prerelease}"
