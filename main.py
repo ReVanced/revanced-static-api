@@ -9,9 +9,7 @@ apis = config["api"]
 api_provider = DefaultApiProvider()
 
 for api in apis:
-    types = api["type"].split("+")
-    del api["type"]  # Don't need the type for the api anymore below
-    for type in types:
+    for type in api["types"]:
         api_type = api_provider.get(type)
         if api_type is None:
             continue

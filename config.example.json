@@ -1,23 +1,31 @@
 {
 	"api": [
 		{
-			"type": "release+contributor",
+			"types": [
+				"release+contributor"
+			],
 			"repositories": [
 				"user/repo"
 			]
 		},
 		{
-			"type": "social",
+			"types": [
+				"social"
+			],
 			"socials": {
 				"website": "https://yourwebsite.com"
 			}
 		},
 		{
-			"type": "team",
+			"types": [
+				"team"
+			],
 			"organization": "yourorg"
 		},
 		{
-			"type": "donation",
+			"types": [
+				"donation"
+			],
 			"links": {
 				"liberapay": "https://liberapay.com/yourteam",
 				"github": "https://github.com/sponsors/yourteam"
