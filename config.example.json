@@ -29,6 +29,10 @@
 			"links": {
 				"Open Collective": "https://opencollective.com/yourteam",
 				"GitHub": "https://github.com/sponsors/yourteam"
+			},
+			"wallets": {
+				"Bitcoin": "bitcoinaddress",
+				"Ethereum": "ethereumaddress"
 			}
 		}
 	],

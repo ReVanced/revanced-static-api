@@ -34,6 +34,7 @@ class ReleasesGenerator(Generator):
     The release file is named after the tag of the release and contains the latest release information of the repository.
     A `latest.json` file is also generated containing the latest release of the repository.
     """
+
     def __init__(self, api):
         super().__init__("releases", api)
 
@@ -74,6 +75,7 @@ class ContributorsGenerator(Generator):
     Generates a contributor file for each repository in the config.
     The contributor file is named after the repository and contains the contributors of the repository.
     """
+
     def __init__(self, api):
         super().__init__("contributors", api)
 
@@ -96,6 +98,7 @@ class ConnectionsGenerator(Generator):
     """
     Generates a file containing the connections of the organization.
     """
+
     def __init__(self, api):
         super().__init__("connections", api)
 
@@ -111,6 +114,7 @@ class TeamGenerator(Generator):
     """
     Generates a team file containing the members of the organization.
     """
+
     def __init__(self, api):
         super().__init__("team", api)
 
@@ -126,17 +130,25 @@ class TeamGenerator(Generator):
 
 class DonationsGenerator(Generator):
     """
-    Generates a donation file containing the donation links of the organization.
+    Generates a donation file containing ways to donate to the organization.
     """
+
     def __init__(self, api):
         super().__init__("donations", api)
 
     def generate(self, config, path):
-        donation = config["links"]
+        donation_links = config["links"]
+        donation_wallets = config["wallets"]
 
         donation_path = join(path, f"donations.json")
 
-        write_json(donation, donation_path)
+        write_json(
+            {
+                "links": donation_links,
+                "wallets": donation_wallets
+            },
+            donation_path
+        )
 
 
 class GeneratorProvider:
