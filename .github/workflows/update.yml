@@ -18,10 +18,11 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Set up Python
-        uses: actions/setup-python@v2
+      - name: "Setup Python, Poetry and Dependencies"
+        uses: packetcoders/action-setup-cache-python-poetry@main
         with:
           python-version: 3.11.3
+          poetry-version: 1.6.1
 
       - name: Write config file
         run: echo "${{ vars.CONFIG }}" > config.json
