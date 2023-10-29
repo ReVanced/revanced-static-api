@@ -22,7 +22,8 @@ The following configuration generates static files using the `contributors` and 
 }
 ```
 
-All static files are generated in the output path specified in the configuration.
+All static files are generated in the output path specified in the configuration.  
+The `purge` array in the configuration specifies which files should be deleted before generating the static files.
 
 ## Setup
 

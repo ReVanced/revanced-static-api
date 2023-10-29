@@ -36,5 +36,8 @@
 			}
 		}
 	],
-	"output": "static"
+	"output": "static",
+	"purge": [
+		"static"
+	]
 }
