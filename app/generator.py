@@ -7,7 +7,12 @@ from abc import abstractmethod
 class Generator:
     _api: api.Api
 
-    def __init__(self, name: str, api: api.Api):
+    def __init__(self, name: str, api: api.Api | None = None):
+        """
+        Args:
+                name (str): The name of the generator
+                api (Api | None): An optional api to use for the generator.
+        """
         self.name = name
         self._api = api
 
@@ -24,6 +29,11 @@ class Generator:
 
 
 class ReleaseGenerator(Generator):
+    """
+    Generates a release file for each repository in the config.
+    The release file is named after the tag of the release and contains the latest release information of the repository.
+    A `latest.json` file is also generated containing the latest release of the repository.
+    """
     def __init__(self, api):
         super().__init__("release", api)
 
@@ -60,6 +70,10 @@ class ReleaseGenerator(Generator):
 
 
 class ContributorGenerator(Generator):
+    """
+    Generates a contributor file for each repository in the config.
+    The contributor file is named after the repository and contains the contributors of the repository.
+    """
     def __init__(self, api):
         super().__init__("contributor", api)
 
@@ -79,6 +93,9 @@ class ContributorGenerator(Generator):
 
 
 class SocialGenerator(Generator):
+    """
+    Generates a social file containing the social links of the organization.
+    """
     def __init__(self, api):
         super().__init__("social", api)
 
@@ -91,6 +108,9 @@ class SocialGenerator(Generator):
 
 
 class TeamGenerator(Generator):
+    """
+    Generates a team file containing the members of the organization.
+    """
     def __init__(self, api):
         super().__init__("team", api)
 
@@ -105,6 +125,9 @@ class TeamGenerator(Generator):
 
 
 class DonationGenerator(Generator):
+    """
+    Generates a donation file containing the donation links of the organization.
+    """
     def __init__(self, api):
         super().__init__("donation", api)
 
