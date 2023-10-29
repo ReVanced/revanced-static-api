@@ -1,7 +1,7 @@
 {
 	"api": [
 		{
-			"types": [
+			"generators": [
 				"release+contributor"
 			],
 			"repositories": [
@@ -9,7 +9,7 @@
 			]
 		},
 		{
-			"types": [
+			"generators": [
 				"social"
 			],
 			"socials": {
@@ -17,13 +17,13 @@
 			}
 		},
 		{
-			"types": [
+			"generators": [
 				"team"
 			],
 			"organization": "yourorg"
 		},
 		{
-			"types": [
+			"generators": [
 				"donation"
 			],
 			"links": {

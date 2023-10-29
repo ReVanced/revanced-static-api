@@ -9,8 +9,8 @@ apis = config["api"]
 api_provider = DefaultApiProvider()
 
 for api in apis:
-    for type in api["types"]:
-        api_type = api_provider.get(type)
-        if api_type is None:
+    for generator_name in api["generators"]:
+        generator = api_provider.get(generator_name)
+        if generator is None:
             continue
-        api_type.generate(api, output)
+        generator.generate(api, output)
