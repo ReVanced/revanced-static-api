@@ -24,11 +24,11 @@
 		},
 		{
 			"generators": [
-				"donation"
+				"donations"
 			],
 			"links": {
-				"liberapay": "https://liberapay.com/yourteam",
-				"github": "https://github.com/sponsors/yourteam"
+				"Open Collective": "https://opencollective.com/yourteam",
+				"GitHub": "https://github.com/sponsors/yourteam"
 			}
 		}
 	],
