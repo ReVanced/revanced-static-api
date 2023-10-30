@@ -3,6 +3,7 @@ from app import api
 from app.utils import get_repository_name, to_json, write_json, read_json, create_if_not_exists
 from abc import abstractmethod
 
+
 class Generator:
     _api: api.Api
 
@@ -29,9 +30,10 @@ class Generator:
 
 class ReleasesGenerator(Generator):
     """
-    Generates a release file for each repository in the config.
-    The release file is named after the tag of the release and contains the latest release information of the repository.
-    A `latest.json` file is also generated containing the latest release of the repository.
+    Generates a release file for each repository in the config:
+        - releases/<repository>/<tag>.json: Release information of the repository.
+        - releases/<repository>/latest.json: Latest release information of the repository.
+        - releases/<repository>.json: Index file containing all releases of the repository.
     """
 
     def __init__(self, api):
@@ -71,8 +73,8 @@ class ReleasesGenerator(Generator):
 
 class ContributorsGenerator(Generator):
     """
-    Generates a contributor file for each repository in the config.
-    The contributor file is named after the repository and contains the contributors of the repository.
+    Generates a contributor file for each repository in the config:
+        - contributors/<repository>.json: Contributors of the repository.
     """
 
     def __init__(self, api):
@@ -95,11 +97,12 @@ class ContributorsGenerator(Generator):
 
 class ConnectionsGenerator(Generator):
     """
-    Generates a file containing the connections of the organization.
+    Generates a file containing the connections of the organization:
+        - connections.json: Connections of the organization.
     """
 
-    def __init__(self, api):
-        super().__init__("connections", api)
+    def __init__(self, _):
+        super().__init__("connections", None)
 
     def generate(self, config, path):
         new_connections = config["connections"]
@@ -111,7 +114,8 @@ class ConnectionsGenerator(Generator):
 
 class TeamGenerator(Generator):
     """
-    Generates a team file containing the members of the organization.
+    Generates a team file containing the members of the organization:
+        - team.json: Members of the organization.
     """
 
     def __init__(self, api):
@@ -129,11 +133,12 @@ class TeamGenerator(Generator):
 
 class DonationsGenerator(Generator):
     """
-    Generates a donation file containing ways to donate to the organization.
+    Generates a donation file containing ways to donate to the organization:
+        - donations.json: Links and wallets to donate to the organization.
     """
 
-    def __init__(self, api):
-        super().__init__("donations", api)
+    def __init__(self, _):
+        super().__init__("donations")
 
     def generate(self, config, path):
         links = config["links"] if "links" in config else []
