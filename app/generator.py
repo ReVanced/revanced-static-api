@@ -18,7 +18,7 @@ class Generator(ABC):
         self._api = api
 
     @abstractmethod
-    def generate(self, config, path):
+    async def generate(self, config, path):
         """
         Generates static files based on the supplied config to the specified path.
 
@@ -43,7 +43,7 @@ class ReleasesGenerator(Generator):
     def __init__(self, api: api.Api = Provide[ApiContainer.api]):
         super().__init__("releases", api)
 
-    def generate(self, config, path):
+    async def generate(self, config, path):
         path = join(path, "releases")
 
         repositories = config["repositories"]
@@ -87,7 +87,7 @@ class ContributorsGenerator(Generator):
     def __init__(self, api: api.Api = Provide[ApiContainer.api]):
         super().__init__("contributors", api)
 
-    def generate(self, config, path):
+    async def generate(self, config, path):
         path = join(path, "contributors")
 
         create_if_not_exists(path)
@@ -111,7 +111,7 @@ class ConnectionsGenerator(Generator):
     def __init__(self):
         super().__init__("connections", None)
 
-    def generate(self, config, path):
+    async def generate(self, config, path):
         new_connections = config["connections"]
 
         connections_path = join(path, f"connections.json")
@@ -131,7 +131,7 @@ class TeamGenerator(Generator):
     def __init__(self, api: api.Api = Provide[ApiContainer.api]):
         super().__init__("team", api)
 
-    def generate(self, config, path):
+    async def generate(self, config, path):
         organization = config["organization"]
 
         team = self._api.get_members(organization)
@@ -150,7 +150,7 @@ class DonationsGenerator(Generator):
     def __init__(self):
         super().__init__("donations")
 
-    def generate(self, config, path):
+    async def generate(self, config, path):
         links = config["links"] if "links" in config else []
         wallets = config["wallets"] if "wallets" in config else []
 
@@ -178,7 +178,7 @@ class AnnouncementGenerator(Generator):
     def __init__(self):
         super().__init__("announcements")
 
-    def generate(self, config, path):
+    async def generate(self, config, path):
         new_announcement = config["announcement"]
         new_announcement_channel = new_announcement["channel"]
 
@@ -220,7 +220,7 @@ class RemoveAnnouncementGenerator(Generator):
     def __init__(self):
         super().__init__("remove_announcement")
 
-    def generate(self, config, path):
+    async def generate(self, config, path):
         # TODO: Implement this
         pass
 
