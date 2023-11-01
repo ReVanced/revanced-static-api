@@ -1,19 +1,21 @@
 from abc import abstractmethod
-
-import requests
+import asyncio
+import aiohttp
 
 class Api:
     _api_key: str | None
 
+    _client_session =  aiohttp.ClientSession()
+
     @abstractmethod
     def __init__(self, api_key: str | None = None):
-        if (self.is_rate_limited()):
+        if (asyncio.get_event_loop().run_until_complete(self.is_rate_limited())):
             raise Exception('Api is rate limited.')
 
         self._api_key = api_key
 
     @abstractmethod
-    def get_release(
+    async def get_release(
         self, repository: str, all: bool = False, prerelease: bool = False
     ) -> dict | list:
         """Gets the release(s) for a repository.
@@ -28,7 +30,7 @@ class Api:
         raise NotImplementedError
 
     @abstractmethod
-    def get_contributor(self, repository):
+    async def get_contributor(self, repository):
         """Gets the contributors for a repository.
 
         Args:
@@ -37,7 +39,7 @@ class Api:
         raise NotImplementedError
 
     @abstractmethod
-    def get_members(self, organization):
+    async def get_members(self, organization):
         '''Gets the team for an organization.
 
         Args:
@@ -46,7 +48,7 @@ class Api:
         raise NotImplementedError
     
     @abstractmethod
-    def is_rate_limited(self) -> bool:
+    async def is_rate_limited(self) -> bool:
         """Checks if the api is rate limited.
 
         Returns:
@@ -59,7 +61,7 @@ class GitHubApi(Api):
         super().__init__()
         pass
 
-    def get_contributor(self, repository):
+    async def get_contributor(self, repository):
         def transform_contributor(contributor: dict) -> dict:
             """Transforms a contributor into a dict.
 
@@ -82,17 +84,15 @@ class GitHubApi(Api):
             del contributor["contributions"]
             return contributions
 
-        contributors = requests.get(
-            f"https://api.github.com/repos/{repository}/contributors"
-        ).json()
-        contributors = list(
-            map(transform_contributor, contributors)
-        )  # List might not be needed.
-        contributors.sort(key=sort_and_delete_key, reverse=True)
+        async with self._client_session.get(f"https://api.github.com/repos/{repository}/contributors") as resp:
+            contributors = await resp.json()
+            contributors = list(
+                map(transform_contributor, contributors)
+            )
+            contributors.sort(key=sort_and_delete_key, reverse=True)
+            return contributors
 
-        return contributors
-
-    def get_release(
+    async def get_release(
         self, repository: str, all: bool = False, prerelease: bool = False
     ) -> dict | list:
         def transform_release(release: dict) -> dict:
@@ -123,18 +123,15 @@ class GitHubApi(Api):
 
         # A little bit of code duplication but more readable than a ternary operation.
         if all:
-            releases: list = requests.get(
-                f"https://api.github.com/repos/{repository}/releases"
-            ).json()
-            # List might not be needed.
-            return list(map(transform_release, releases))
+            async with self._client_session.get(f"https://api.github.com/repos/{repository}/releases") as resp:
+                releases = await resp.json()
+                return list(map(transform_release, releases))
         else:
-            latest_release: dict = requests.get(
-                f"https://api.github.com/repos/{repository}/releases/latest?prerelease={prerelease}"
-            ).json()
-            return transform_release(latest_release)
+            async with self._client_session.get(f"https://api.github.com/repos/{repository}/releases/latest?prerelease={prerelease}") as resp:
+                latest_release = await resp.json()
+                return transform_release(latest_release)
 
-    def get_members(self, organization):
+    async def get_members(self, organization):
         def transform_team_member(member: dict) -> dict:
             '''Transforms a team member into a dict.
 
@@ -151,10 +148,12 @@ class GitHubApi(Api):
                 'link': member['html_url']
             }
 
-        members = requests.get(
-            f'https://api.github.com/orgs/{organization}/members').json()
-        # List might not be needed.
-        return list(map(transform_team_member, members))
+        async with self._client_session.get(f'https://api.github.com/orgs/{organization}/members') as resp:
+            members = await resp.json()
+            return list(map(transform_team_member, members))
     
-    def is_rate_limited(self) -> bool:
-        return requests.get('https://api.github.com/rate_limit').json()["rate"]["remaining"] == 0
+    async def is_rate_limited(self) -> bool:
+        async with self._client_session.get('https://api.github.com/rate_limit') as resp:
+            return (await resp.json())["rate"]["remaining"] == 0
+
+

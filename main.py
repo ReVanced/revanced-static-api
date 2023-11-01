@@ -28,7 +28,7 @@ def main():
             tasks.append(
                 loop.create_task(generator.generate(generator_config, output))
             ) if generator is not None else print(f"Generator {generator_name} not found.")
-
+        
     loop.run_until_complete(asyncio.wait(tasks))
     loop.close()
 

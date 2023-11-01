@@ -49,7 +49,7 @@ class ReleasesGenerator(Generator):
         repositories = config["repositories"]
 
         for repository in repositories:
-            release = self._api.get_release(repository)
+            release = await self._api.get_release(repository)
             repository_name = get_repository_name(repository)
 
             tag = release["tag"]
@@ -96,7 +96,7 @@ class ContributorsGenerator(Generator):
         for repository in repositories:
             repository_name = get_repository_name(repository)
 
-            contributors = self._api.get_contributor(repository)
+            contributors = await self._api.get_contributor(repository)
             contributors_path = join(path, f"{repository_name}.json")
 
             write_json(contributors, contributors_path)
@@ -134,7 +134,7 @@ class TeamGenerator(Generator):
     async def generate(self, config, path):
         organization = config["organization"]
 
-        team = self._api.get_members(organization)
+        team = await self._api.get_members(organization)
 
         team_path = join(path, f"team.json")
 
