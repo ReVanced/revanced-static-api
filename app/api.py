@@ -7,6 +7,9 @@ class Api:
 
     @abstractmethod
     def __init__(self, api_key: str | None = None):
+        if (self.is_rate_limited()):
+            raise Exception('Api is rate limited.')
+
         self._api_key = api_key
 
     @abstractmethod
@@ -41,10 +44,19 @@ class Api:
                 organization (str): The organization to get the team for.
         '''
         raise NotImplementedError
+    
+    @abstractmethod
+    def is_rate_limited(self) -> bool:
+        """Checks if the api is rate limited.
 
+        Returns:
+                bool: Whether the api is rate limited or not.
+        """
+        raise NotImplementedError
 
 class GitHubApi(Api):
     def __init__(self):
+        super().__init__()
         pass
 
     def get_contributor(self, repository):
@@ -143,3 +155,6 @@ class GitHubApi(Api):
             f'https://api.github.com/orgs/{organization}/members').json()
         # List might not be needed.
         return list(map(transform_team_member, members))
+    
+    def is_rate_limited(self) -> bool:
+        return requests.get('https://api.github.com/rate_limit').json()["rate"]["remaining"] == 0
