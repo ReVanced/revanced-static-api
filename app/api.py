@@ -2,7 +2,6 @@ from abc import abstractmethod
 
 import requests
 
-
 class Api:
     _api_key: str | None
 

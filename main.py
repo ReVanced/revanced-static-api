@@ -2,23 +2,27 @@ from genericpath import isdir, isfile
 import os
 import shutil
 from app.config import load_config
+from app.dependencies import wire_dependencies
 from app.generator import DefaultGeneratorProvider
 
-config = load_config()
+def main():
+    config = load_config()
 
-generator_provider = DefaultGeneratorProvider()
+    for path in config["purge"]:
+        if isdir(path):
+            shutil.rmtree(path)
+        elif isfile(path):
+            os.remove(path)
 
-for path in config["purge"]:
-    if isdir(path):
-        shutil.rmtree(path)
-    elif isfile(path):
-        os.remove(path)
+    output = config["output"]
+    generator_provider = DefaultGeneratorProvider()
 
-output = config["output"]
+    for generator_config in config["configs"]:
+        for generator_name in generator_config["generators"]:
+            generator = generator_provider.get(generator_name)
 
-for generator_config in config["configs"]:
-    for generator_name in generator_config["generators"]:
-        generator = generator_provider.get(generator_name)
-        if generator is None:
-            continue
-        generator.generate(generator_config, output)
+            generator.generate(generator_config, output) if generator is not None else print(f"Generator {generator_name} not found.")
+if __name__ == "__main__":
+    wire_dependencies()
+    main()
+

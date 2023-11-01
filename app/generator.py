@@ -1,11 +1,12 @@
 from os.path import join
 from app import api
 from app.utils import get_repository_name, to_json, write_json, read_json, create_if_not_exists
-from abc import abstractmethod
+from abc import ABC, abstractmethod
+from dependency_injector.wiring import Provide, inject
+from app.dependencies import ApiContainer
 
-
-class Generator:
-    _api: api.Api
+class Generator(ABC):
+    _api: api.Api | None
 
     def __init__(self, name: str, api: api.Api | None = None):
         """
@@ -36,7 +37,10 @@ class ReleasesGenerator(Generator):
         - releases/<repository>.json: Index file containing all releases of the repository.
     """
 
-    def __init__(self, api):
+    _api: api.Api
+
+    @inject
+    def __init__(self, api: api.Api = Provide[ApiContainer.api]):
         super().__init__("releases", api)
 
     def generate(self, config, path):
@@ -76,8 +80,11 @@ class ContributorsGenerator(Generator):
     Generates a contributor file for each repository in the config:
         - contributors/<repository>.json: Contributors of the repository.
     """
+   
+    _api: api.Api
 
-    def __init__(self, api):
+    @inject
+    def __init__(self, api: api.Api = Provide[ApiContainer.api]):
         super().__init__("contributors", api)
 
     def generate(self, config, path):
@@ -101,7 +108,7 @@ class ConnectionsGenerator(Generator):
         - connections.json: Connections of the organization.
     """
 
-    def __init__(self, _):
+    def __init__(self):
         super().__init__("connections", None)
 
     def generate(self, config, path):
@@ -117,8 +124,11 @@ class TeamGenerator(Generator):
     Generates a team file containing the members of the organization:
         - team.json: Members of the organization.
     """
+   
+    _api: api.Api
 
-    def __init__(self, api):
+    @inject
+    def __init__(self, api: api.Api = Provide[ApiContainer.api]):
         super().__init__("team", api)
 
     def generate(self, config, path):
@@ -137,7 +147,7 @@ class DonationsGenerator(Generator):
         - donations.json: Links and wallets to donate to the organization.
     """
 
-    def __init__(self, _):
+    def __init__(self):
         super().__init__("donations")
 
     def generate(self, config, path):
@@ -155,28 +165,108 @@ class DonationsGenerator(Generator):
         )
 
 
+class AnnouncementGenerator(Generator):
+    """
+    Generates announcement files:
+
+        - /announcements.json: Get a list of announcements from all channels.
+        - /announcements/<channel>.json: Get a list of announcement from a channel.
+        - /announcements/latest.json: Get the latest announcement.
+        - /announcements/<channel>/latest.json: Get the latest announcement from a channel.
+    """
+
+    def __init__(self):
+        super().__init__("announcements")
+
+    def generate(self, config, path):
+        new_announcement = config["announcement"]
+        new_announcement_channel = new_announcement["channel"]
+
+        announcements_path = join(path, f"announcements.json")
+        announcements = read_json(announcements_path, [])
+
+        # Determine the id of the new announcement. The id is the highest id + 1
+        new_announcement_id = 0
+        for announcement in announcements:
+            if announcement["id"] >= new_announcement_id:
+                new_announcement_id = announcement["id"] + 1
+        new_announcement["id"] = new_announcement_id
+
+        # Add the new announcement to the list of announcements
+        announcements.append(new_announcement)
+        write_json(announcements, announcements_path)
+
+        # Add the new announcement to the channel file
+        channel_path = join(
+            path, f"announcements/{new_announcement_channel}.json")
+        create_if_not_exists(channel_path)
+        channel_announcements = read_json(channel_path, [])
+        channel_announcements.append(new_announcement)
+        write_json(channel_announcements, channel_path)
+
+        # Update the latest announcement file
+        write_json(new_announcement, join(path, "announcements/latest.json"))
+
+        # Update the latest announcement for the channel
+        write_json(new_announcement, join(
+            path, f"announcements/{new_announcement_channel}/latest.json"))
+
+
+class RemoveAnnouncementGenerator(Generator):
+    """
+    Removes an announcement.
+    """
+
+    def __init__(self):
+        super().__init__("remove_announcement")
+
+    def generate(self, config, path):
+        # TODO: Implement this
+        pass
+
 class GeneratorProvider:
-    generators: list[Generator]
+    """
+    Provides a way to get a generator by name.
+    """
+    _generators = {}
 
     def __init__(self, generators: list[Generator]):
-        self.generators = generators
+        """
+        Args:
+                generators (list[Generator]): A list of generators.
+        """
+        for generator in generators:
+            self._generators[generator.name] = generator
 
     def get(self, name: str) -> Generator | None:
-        for generator in self.generators:
-            if generator.name == name:
-                return generator
+        """
+        Gets a generator by name.
 
-        return None
+        Args:
+                name (str): The name of the generator.
 
+        Returns:
+                Generator | None: The generator if found, otherwise None.
+        """
+        return self._generators[name] if name in self._generators else None
 
 class DefaultGeneratorProvider(GeneratorProvider):
     def __init__(self):
-        self._api = api.GitHubApi()
+        super().__init__(
+            [
+                ReleasesGenerator(),
+                ContributorsGenerator(),
+                TeamGenerator(),
+                ConnectionsGenerator(),
+                DonationsGenerator()
+            ]
+        )
 
-        super().__init__([
-            ReleasesGenerator(self._api),
-            ContributorsGenerator(self._api),
-            ConnectionsGenerator(self._api),
-            TeamGenerator(self._api),
-            DonationsGenerator(self._api)
-        ])
+class AnnouncementsGeneratorProvider(GeneratorProvider):
+    def __init__(self):
+        super().__init__(
+            [
+                AnnouncementGenerator(),
+                RemoveAnnouncementGenerator()
+            ]
+        )
