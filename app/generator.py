@@ -5,6 +5,7 @@ from abc import ABC, abstractmethod
 from dependency_injector.wiring import Provide, inject
 from app.dependencies import ApiContainer
 
+
 class Generator(ABC):
     _api: api.Api | None
 
@@ -80,7 +81,7 @@ class ContributorsGenerator(Generator):
     Generates a contributor file for each repository in the config:
         - contributors/<repository>.json: Contributors of the repository.
     """
-   
+
     _api: api.Api
 
     @inject
@@ -124,7 +125,7 @@ class TeamGenerator(Generator):
     Generates a team file containing the members of the organization:
         - team.json: Members of the organization.
     """
-   
+
     _api: api.Api
 
     @inject
@@ -224,49 +225,15 @@ class RemoveAnnouncementGenerator(Generator):
         # TODO: Implement this
         pass
 
-class GeneratorProvider:
-    """
-    Provides a way to get a generator by name.
-    """
-    _generators = {}
 
-    def __init__(self, generators: list[Generator]):
-        """
-        Args:
-                generators (list[Generator]): A list of generators.
-        """
-        for generator in generators:
-            self._generators[generator.name] = generator
-
-    def get(self, name: str) -> Generator | None:
-        """
-        Gets a generator by name.
-
-        Args:
-                name (str): The name of the generator.
-
-        Returns:
-                Generator | None: The generator if found, otherwise None.
-        """
-        return self._generators[name] if name in self._generators else None
-
-class DefaultGeneratorProvider(GeneratorProvider):
-    def __init__(self):
-        super().__init__(
-            [
-                ReleasesGenerator(),
-                ContributorsGenerator(),
-                TeamGenerator(),
-                ConnectionsGenerator(),
-                DonationsGenerator()
-            ]
-        )
-
-class AnnouncementsGeneratorProvider(GeneratorProvider):
-    def __init__(self):
-        super().__init__(
-            [
-                AnnouncementGenerator(),
-                RemoveAnnouncementGenerator()
-            ]
-        )
+generators = {
+    generator.name: generator for generator in [
+        ReleasesGenerator(),
+        ContributorsGenerator(),
+        TeamGenerator(),
+        ConnectionsGenerator(),
+        DonationsGenerator(),
+        AnnouncementGenerator(),
+        RemoveAnnouncementGenerator()
+    ]
+}
