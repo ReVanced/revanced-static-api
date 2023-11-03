@@ -18,7 +18,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: "Setup Python, Poetry and Dependencies"
+      - name: Setup Python, Poetry and Dependencies
         uses: packetcoders/action-setup-cache-python-poetry@main
         with:
           python-version: 3.11.3
@@ -45,7 +45,6 @@ jobs:
 
       - name: Update static files
         run: |
-          poetry install
           poetry run python main.py
 
       - name: Commit changes
