@@ -5,7 +5,7 @@ on:
   workflow_dispatch:
     inputs:
       output-branch:
-        descripton: "Branch to push static files to"
+        description: "Branch to push static files to"
         required: true
 
 jobs:
