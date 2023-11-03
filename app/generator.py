@@ -50,29 +50,32 @@ class ReleasesGenerator(Generator):
         repositories = config["repositories"]
 
         for repository in repositories:
-            release = await self._api.get_release(repository)
+            releases = await self._api.get_releases(repository)
+
             repository_name = get_repository_name(repository)
 
-            tag = release["tag"]
-
-            release_path = join(path, repository_name)
-            release_json = to_json(release)
-
-            create_if_not_exists(release_path)
-
-            write_json(release_json, join(
-                release_path, f"{tag}.json"), overwrite=False)
-            write_json(
-                release_json, join(release_path, "latest.json")
-            )  # Overwrite the latest release
-
-            # At last join the current tag to an index file
             index_path = join(path, f"{repository_name}.json")
-
             index = read_json(index_path, [])
-            if tag not in index:  # TODO: Check if there a better way to do this
-                index.append(tag)  # Add the current tag to the index
 
+            for i, release in enumerate(releases):
+                tag = release["tag"]
+                release_path = join(path, repository_name)
+                release_json = to_json(releases)
+
+                # Create the release directory if it doesn't exist and write the release file
+                create_if_not_exists(release_path)
+                write_json(release_json, join(
+                    release_path, f"{tag}.json"), overwrite=False)
+
+                if i == 0:
+                    # Overwrite the latest release file
+                    write_json(release_json, join(release_path, "latest.json"))
+
+                if tag not in index:
+                   # Add the current tag to the index
+                    index.append(tag)
+
+            # Overwrite the index file with the new releases
             write_json(index, index_path)
 
 
@@ -97,7 +100,7 @@ class ContributorsGenerator(Generator):
         for repository in repositories:
             repository_name = get_repository_name(repository)
 
-            contributors = await self._api.get_contributor(repository)
+            contributors = await self._api.get_contributors(repository)
             contributors_path = join(path, f"{repository_name}.json")
 
             write_json(contributors, contributors_path)
@@ -226,14 +229,16 @@ class RemoveAnnouncementGenerator(Generator):
         pass
 
 
-generators = {
-    generator.name: generator for generator in [
-        ReleasesGenerator(),
-        ContributorsGenerator(),
-        TeamGenerator(),
-        ConnectionsGenerator(),
-        DonationsGenerator(),
-        AnnouncementGenerator(),
-        RemoveAnnouncementGenerator()
-    ]
-}
+# This function is needed. A variable in the global scope cannot be used, because the dependency injector is not initialized yet.
+def get_generators():
+    return {
+        generator.name: generator for generator in [
+            ReleasesGenerator(),
+            ContributorsGenerator(),
+            TeamGenerator(),
+            ConnectionsGenerator(),
+            DonationsGenerator(),
+            AnnouncementGenerator(),
+            RemoveAnnouncementGenerator()
+        ]
+    }

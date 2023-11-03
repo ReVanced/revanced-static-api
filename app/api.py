@@ -16,36 +16,42 @@ class Api:
         self._api_key = api_key
 
     @abstractmethod
-    async def get_release(
+    async def get_releases(
         self, repository: str, all: bool = False, prerelease: bool = False
-    ) -> dict | list:
-        """Gets the release(s) for a repository.
+    ) -> list:
+        """Gets the releases for a repository.
 
         Args:
                 repository (str): The repository to get releases for.
                 all (bool, optional): Whether to get all releases or not. Defaults to False.
                 prerelease (bool, optional): Whether to get prereleases or not. Defaults to False.
         Returns:
-                dict | list: The release(s) for the repository.
+                list: The releases for the repository.
         """
         raise NotImplementedError
 
     @abstractmethod
-    async def get_contributor(self, repository):
+    async def get_contributors(self, repository) -> list:
         """Gets the contributors for a repository.
 
         Args:
                 repository (str): The repository to get contributors for.
+
+        Returns:
+                list: The contributors for the repository.
         """
         raise NotImplementedError
 
     @abstractmethod
-    async def get_members(self, organization):
-        '''Gets the team for an organization.
+    async def get_members(self, organization) -> list:
+        """Gets the team for an organization.
 
         Args:
                 organization (str): The organization to get the team for.
-        '''
+
+        Returns:
+                list: The team for the organization.
+        """
         raise NotImplementedError
 
     @abstractmethod
@@ -63,7 +69,7 @@ class GitHubApi(Api):
         super().__init__()
         pass
 
-    async def get_contributor(self, repository):
+    async def get_contributors(self, repository) -> list:
         def transform_contributor(contributor: dict) -> dict:
             """Transforms a contributor into a dict.
 
@@ -94,10 +100,9 @@ class GitHubApi(Api):
             contributors.sort(key=sort_and_delete_key, reverse=True)
             return contributors
 
-    # TODO: Return a list of objects instead of a dict.
-    async def get_release(
+    async def get_releases(
         self, repository: str, all: bool = False, prerelease: bool = False
-    ) -> dict | list:
+    ) -> list:
         def transform_release(release: dict) -> dict:
             """Transforms a release dict into a dict.
 
@@ -131,9 +136,9 @@ class GitHubApi(Api):
         else:
             async with self._client_session.get(f"https://api.github.com/repos/{repository}/releases/latest?prerelease={prerelease}") as resp:
                 latest_release = await resp.json()
-                return transform_release(latest_release)
+                return [transform_release(latest_release)]
 
-    async def get_members(self, organization):
+    async def get_members(self, organization) -> list:
         def transform_team_member(member: dict) -> dict:
             '''Transforms a team member into a dict.
 

@@ -4,7 +4,7 @@ import os
 import shutil
 from app.config import load_config
 from app.dependencies import wire_dependencies
-from app.generator import generators
+from app.generator import get_generators
 
 
 def main():
@@ -16,6 +16,8 @@ def main():
 
 
 def generate(config):
+    generators = get_generators()
+
     loop = asyncio.get_event_loop()
     tasks = []
 
