@@ -2,10 +2,11 @@ from abc import abstractmethod
 import asyncio
 import aiohttp
 
+
 class Api:
     _api_key: str | None
 
-    _client_session =  aiohttp.ClientSession()
+    _client_session = aiohttp.ClientSession()
 
     @abstractmethod
     def __init__(self, api_key: str | None = None):
@@ -46,7 +47,7 @@ class Api:
                 organization (str): The organization to get the team for.
         '''
         raise NotImplementedError
-    
+
     @abstractmethod
     async def is_rate_limited(self) -> bool:
         """Checks if the api is rate limited.
@@ -55,6 +56,7 @@ class Api:
                 bool: Whether the api is rate limited or not.
         """
         raise NotImplementedError
+
 
 class GitHubApi(Api):
     def __init__(self):
@@ -92,6 +94,7 @@ class GitHubApi(Api):
             contributors.sort(key=sort_and_delete_key, reverse=True)
             return contributors
 
+    # TODO: Return a list of objects instead of a dict.
     async def get_release(
         self, repository: str, all: bool = False, prerelease: bool = False
     ) -> dict | list:
@@ -104,7 +107,6 @@ class GitHubApi(Api):
             Returns:
                     dict: The transformed release dict.
             """
-
             return {
                 # TODO: Check if theres any need for this: 'id': release['id'].
                 "tag": release["tag_name"],
@@ -151,9 +153,7 @@ class GitHubApi(Api):
         async with self._client_session.get(f'https://api.github.com/orgs/{organization}/members') as resp:
             members = await resp.json()
             return list(map(transform_team_member, members))
-    
+
     async def is_rate_limited(self) -> bool:
         async with self._client_session.get('https://api.github.com/rate_limit') as resp:
             return (await resp.json())["rate"]["remaining"] == 0
-
-
