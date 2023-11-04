@@ -180,7 +180,7 @@ class AnnouncementGenerator(Generator):
     """
 
     def __init__(self):
-        super().__init__("announcements")
+        super().__init__("announcement")
 
     async def generate(self, config, path):
         new_announcement = config["announcement"]
