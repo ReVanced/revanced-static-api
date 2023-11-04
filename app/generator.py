@@ -201,19 +201,21 @@ class AnnouncementGenerator(Generator):
         write_json(announcements, announcements_path)
 
         # Add the new announcement to the channel file
-        channel_path = join(
-            path, f"announcements/{new_announcement_channel}.json")
+        channel_path = join(path, f"announcements")
         create_if_not_exists(channel_path)
-        channel_announcements = read_json(channel_path, [])
+  
+        channel_file = join(channel_path, f"{new_announcement_channel}.json")
+        channel_announcements = read_json(channel_file, [])
         channel_announcements.append(new_announcement)
-        write_json(channel_announcements, channel_path)
+        write_json(channel_announcements, channel_file)
 
         # Update the latest announcement file
         write_json(new_announcement, join(path, "announcements/latest.json"))
 
         # Update the latest announcement for the channel
-        write_json(new_announcement, join(
-            path, f"announcements/{new_announcement_channel}/latest.json"))
+        channel_path = join(path, f"announcements/{new_announcement_channel}")
+        create_if_not_exists(channel_path)
+        write_json(new_announcement, f"{channel_path}/latest.json")
 
 
 class RemoveAnnouncementGenerator(Generator):

@@ -7,6 +7,12 @@ import click
 from app.config import load_config
 from app.dependencies import wire_dependencies
 from app.generator import get_generators
+from app.utils import create_if_not_exists
+
+
+@click.group()
+def generator():
+    pass
 
 
 @click.command()
@@ -23,6 +29,8 @@ def generate():
     tasks = []
 
     output = config["output"]
+    create_if_not_exists(output)
+
     for generator_config in config["configs"]:
         for generator_name in generator_config["generators"]:
             generator = generators[generator_name] if generator_name in generators else None
@@ -41,3 +49,6 @@ def purge(paths):
             shutil.rmtree(path)
         elif isfile(path):
             os.remove(path)
+
+
+generator.add_command(generate)
