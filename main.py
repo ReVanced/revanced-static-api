@@ -1,47 +1,14 @@
-import asyncio
-from genericpath import isdir, isfile
-import os
-import shutil
-from app.config import load_config
-from app.dependencies import wire_dependencies
-from app.generator import get_generators
+import click
+
+from commands.generate import generate
 
 
+@click.group()
 def main():
-    config = load_config()
-
-    purge(config["purge"])
-
-    generate(config)
+    pass
 
 
-def generate(config):
-    generators = get_generators()
-
-    loop = asyncio.get_event_loop()
-    tasks = []
-
-    output = config["output"]
-    for generator_config in config["configs"]:
-        for generator_name in generator_config["generators"]:
-            generator = generators[generator_name] if generator_name in generators else None
-
-            tasks.append(
-                loop.create_task(generator.generate(generator_config, output))
-            ) if generator is not None else print(f"Generator {generator_name} not found.")
-
-    loop.run_until_complete(asyncio.wait(tasks))
-    loop.close()
-
-
-def purge(paths):
-    for path in paths:
-        if isdir(path):
-            shutil.rmtree(path)
-        elif isfile(path):
-            os.remove(path)
-
+main.add_command(generate)
 
 if __name__ == "__main__":
-    wire_dependencies()
     main()
